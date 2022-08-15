@@ -3,15 +3,23 @@
 #include "stdbool.h"
 #include <SDL.h>
 #include <chip8.h>
+#include <chip8_keyboard.h>
 
 typedef struct Chip8 Chip8;
+
+const char keyboardMap[CHIP8_TOTAL_KEYS] = 
+{
+    SDLK_0, SDLK_1, SDLK_2, SDLK_3,
+    SDLK_4, SDLK_5, SDLK_6, SDLK_7, 
+    SDLK_8, SDLK_9, SDLK_a, SDLK_b, 
+    SDLK_c, SDLK_d, SDLK_e, SDLK_f
+};
 
 int main(int argc, char *argv[])
 {
     Chip8 chip8;
-
-    chip8MemorySet(&chip8.memory, 0x400, 'Z');
-    printf("%c\n", chip8MemoryGet(&chip8.memory, 0x400));
+    
+    chip8Init(&chip8);
 
     SDL_Init(SDL_INIT_EVERYTHING);
 
@@ -32,6 +40,33 @@ int main(int argc, char *argv[])
 
         while(SDL_PollEvent(&event))
         {
+            switch(event.type)
+            {
+                case SDL_KEYDOWN: {
+                    char key = event.key.keysym.sym;
+                    int virtualKey = chip8KeyboardMap(keyboardMap, key);
+                    
+                    if(virtualKey != -1) {
+                        chip8KeyboardKeyDown(&chip8.keyboard, virtualKey); 
+                        printf("Key is down\n");
+                    }
+
+                    break;
+                }
+
+                case SDL_KEYUP: {
+                    char key = event.key.keysym.sym;
+                    int virtualKey = chip8KeyboardMap(keyboardMap, key);
+
+                    if(virtualKey != -1) {
+                        chip8KeyboardKeyUp(&chip8.keyboard, virtualKey);
+                        printf("Key is up\n");
+                    }
+
+                    break;
+                }
+            }
+
             if(event.type == SDL_QUIT)
             {
                 isPlaying = false;
