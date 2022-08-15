@@ -9,6 +9,6 @@ struct Chip8_memory
 
 static void chip8IsMemoryInBounds(const int index);
 void chip8MemorySet(struct Chip8_memory* memory, int index, unsigned char value);
-unsigned char chip8MemoryGet(struct Chip8_memory* memory, int index);
+unsigned char chip8MemoryGet(struct Chip8_memory* memory, const int index);
 
 #endif
